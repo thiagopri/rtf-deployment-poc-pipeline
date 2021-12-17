@@ -28,6 +28,8 @@ environment {
 stages{
 	stage('Build and Test') {
 		steps {
+			sh 'pwd'
+			sh 'ls -la'
 			sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
 		}
 	}

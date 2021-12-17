@@ -53,13 +53,13 @@ post{
 		cleanWs()
 	}
 	aborted{
-			
+		cleanWs()
 	}
 	failure{
-			
+		cleanWs()
 	}
 	success{
-			
+		cleanWs()
 	}
 }
 

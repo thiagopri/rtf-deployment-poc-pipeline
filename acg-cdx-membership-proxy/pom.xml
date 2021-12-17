@@ -159,20 +159,6 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</pluginRepository>
-		<pluginRepository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>central</id>
-			<name>plugins-release</name>
-			<url>https://plentjnks01.aaa-acg.net:8543/artifactory/plugins-release</url>
-		</pluginRepository>
-		<pluginRepository>
-			<snapshots/>
-			<id>snapshots</id>
-			<name>plugins-release</name>
-			<url>https://plentjnks01.aaa-acg.net:8543/artifactory/plugins-release</url>
-		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
 		<repository>

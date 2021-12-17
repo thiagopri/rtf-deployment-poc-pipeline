@@ -45,7 +45,7 @@
 						<provider>MC</provider>
 						<target>acg-rtf-dev</target>
 						<replicas>1</replicas>
-
+						<skipDeploymentVerification>true</skipDeploymentVerification>
 						<properties>
 							<mule.env>${env}</mule.env>
 							<anypoint.platform.client_id>${anypoint.platform.client_id}</anypoint.platform.client_id>
@@ -57,7 +57,7 @@
 								<inbound>
 									<publicUrl>rfapi-dev.acg.aaa.com/${app.name}</publicUrl>
 								</inbound>
-							</http>							
+							</http>
 							<resources>
 								<cpu>
 									<reserved>36m</reserved>
@@ -150,6 +150,16 @@
 	</repositories>
 
 	<pluginRepositories>
+		<pluginRepository>
+			<id>Central</id>
+			<url>http://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
 		<pluginRepository>
 			<id>mulesoft-releases</id>
 			<name>mulesoft release repository</name>

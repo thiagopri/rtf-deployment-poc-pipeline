@@ -29,12 +29,16 @@ environment {
 stages{
 	stage('Build and Test') {
 		steps {
-			sh 'pwd'
-			sh 'ls -la'
 			sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
 		}
 	}
 	
+	stage('Update pom version') {
+		steps {
+			//sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit'
+			sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.${BUILD_NUMBER} versions:commit'
+		}
+	}
 
 	//dev Deployment
 	stage('Deploy to Anypoint Exchange'){

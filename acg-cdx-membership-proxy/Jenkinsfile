@@ -20,6 +20,7 @@ pipeline {
 }
 	
 environment {
+	JOB_NAME = "acg-cdx-membership-proxy"
 	ARTIFACTORY_PATH = "libs-release-local/com/acg/services/api"
 	DEPLOYMENT_FOLDER_BUILDNUMBER = "/opt/app/jenkins/jobs/${JOB_NAME}/workspace/Artifact/com/acg/services/api/${JOB_NAME}/${JOB_NAME}-1.0.0-${BUILD_NUMBER}"
 	DEPLOYMENT_FOLDER_ARTIFACTVERSION = "/opt/app/jenkins/jobs/${JOB_NAME}/workspace/Artifact/com/acg/services/api/${JOB_NAME}/${JOB_NAME}-1.0.0-${ArtifactVersion}"

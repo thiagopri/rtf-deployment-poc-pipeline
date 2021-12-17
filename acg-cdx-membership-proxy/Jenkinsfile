@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 properties([parameters([[$class: 'ChoiceParameter', choiceType: 'PT_MULTI_SELECT', description: 'Passing the Environment', filterLength: 1, filterable: false, name: 'Env', randomName: 'choice-parameter-344108226285542', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return[\'select env\']'], script: [classpath: [], sandbox: false, script: '''return[
 \'DEV\',
 \'QA\',
-\'PROD\'
+\'PROD\' 
 ]''']]], validatingString(defaultValue: '', description: '''Enter ArtifactVersion to be deployed
 Dev - ArtifactVersion can be empty or a number
 QA - ArtifactVersion is must''',failedValidationMessage: 'ArtifactVersion must be empty or a number', name: 'ArtifactVersion', regex: '^(\\s*|\\d+)$'),  string(defaultValue: 'git@paentgit01.aaa-acg.net:ACG/mule-ers-ulra-workorder-api.git', description: '', name: 'Git', trim: false)]), pipelineTriggers([githubPush()])])

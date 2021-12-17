@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="11ae850a-f7ec-4ed9-b504-653975772def" >
+		<http:listener-connection host="0.0.0.0" port="${http.private.port}">
+		</http:listener-connection>
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="b9069fc2-fa9c-4bcf-ba3a-e338e1b6e577" >
+		<http:request-connection port="${implementation.port}" protocol="HTTPS" host="${implementation.host}" connectionIdleTimeout="${connection.timeout}">
+			<http:authentication >
+				<oauth:client-credentials-grant-type clientId="${cdx.memberLookup.clientId}" clientSecret="${cdx.memberLookup.clientSecret}" tokenUrl="${cdx.memberLookup.tokenURL}" scopes="READ"/>
+			</http:authentication>
+		</http:request-connection>
+	</http:request-config>
+	
+	<flow name="cdx-membership-proxy-lookup-flow" doc:id="5d233abd-ead5-405f-aaa5-1471a9c43dc7" >
+		<logger level="INFO" doc:name="MuleEntry" doc:id="bb28ee4f-cbaa-4eee-aeef-a0bef7932790" message="CDX LookupRequest | memberId:  #[attributes.headers.mbr_id]"/>
+		<http:request method="GET" doc:name="CDX Lookup" doc:id="69abe5f7-eb21-4e7d-97b4-c834b1e26992" path="${implementation.path.lookup}" config-ref="HTTP_Request_configuration">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	(mbr_id : attributes.headers.mbr_id) if (attributes.headers.mbr_id != null)
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="payload" doc:id="a5fd4ed2-39f5-4b68-ab17-449f86da4bf7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="MuleExit" doc:id="3ac9739c-dd13-4d7c-856b-a75e41bd0f54" message="response from CDX lookup backend:: #[payload]"/>
+	</flow>
+			<flow name="cdx-membership-proxy-search-flow" doc:id="0b65dd02-e5fd-4e41-aa7e-e39ebab0dad4" >
+		<logger level="INFO" doc:name="MuleEntry" doc:id="0ad17029-73cc-4237-9d06-b72584472fce" message="CDX SearchRequest | inputRequest querParams: #[attributes.queryParams]  "/>
+		<http:request method="GET" doc:name="CDX Search" doc:id="e6defe03-d83d-4197-a775-7343005303be" path="${implementation.path.search}" config-ref="HTTP_Request_configuration">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	(mbr_lst_nm : attributes.queryParams.mbr_lst_nm) if( attributes.queryParams.mbr_lst_nm != null),
+	(mbr_fst_nm : attributes.queryParams.mbr_fst_nm) if (attributes.queryParams.mbr_fst_nm != null),
+	(mbr_adr_pstl_cd: attributes.queryParams.mbr_adr_pstl_cd) if (attributes.queryParams.mbr_adr_pstl_cd != null),
+	(clb_cd: attributes.queryParams.clb_cd) if(attributes.queryParams.clb_cd != null),
+	(mbrtel_nr: attributes.queryParams.mbtel_nr) if(attributes.queryParams.mbtel_nr != null),
+	(startpos: attributes.queryParams.startpos) if(attributes.queryParams.startpos != null),
+	(mbr_id : attributes.queryParams.mbr_id) if(attributes.queryParams.mbr_id != null)
+}]]]></http:query-params>
+		
+
+</http:request>
+		<ee:transform doc:name="payload" doc:id="8283b48d-fa80-46ec-91c4-1b61afabe41c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="MuleExit" doc:id="27fe84cf-c14c-4e95-8ffc-0e7ca04244f9" message="response from CDX search backend: #[payload]"/>
+	</flow>
+	<flow name="cdx-membership-proxy-auth-flow" doc:id="a1b6e565-8b05-4a71-ba1e-fdc7c0687c54" >
+		<logger level="INFO" doc:name="MuleEntry" doc:id="0a31f120-8f7f-48e0-a306-a6aae7ee5158" message="CDX Auth Request | MemberId: #[attributes.headers.mbr_id]  | input queryParams:#[attributes.queryParams]"/>
+		<http:request method="GET" doc:name="CDX Auth" doc:id="a82b0322-40a3-4c3c-99c5-6e014b98d100" path="${implementation.path.auth}" config-ref="HTTP_Request_configuration">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	(mbr_id : attributes.headers.mbr_id) if (attributes.headers.mbr_id != null)
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[{
+	source_clb: attributes.queryParams.source_clb,
+	transaction_id: attributes.queryParams.transaction_id,
+	service_date: attributes.queryParams.service_date,
+	service_month: attributes.queryParams.service_month,
+	service_year: attributes.queryParams.service_year,
+	clb_cd: attributes.queryParams.clb_cd,
+}]]]></http:query-params>
+			<http:response-validator >
+				<http:failure-status-code-validator values="#[400-499]" />
+			</http:response-validator>
+		
+</http:request>
+		<ee:transform doc:name="payload" doc:id="c8682062-869c-4723-9f4d-aade99254d47" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="httpStatus" ><![CDATA[attributes.statusCode]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="MuleExit" doc:id="abd45e79-3c33-4f78-97ea-a3a12d05aa9c" message="response from CDX Auth backend: #[payload] #[vars.httpStatus]"/>
+	
+</flow>
+</mule>

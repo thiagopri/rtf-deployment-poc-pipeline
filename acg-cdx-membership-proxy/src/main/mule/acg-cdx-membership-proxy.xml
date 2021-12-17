@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+    <apikit:config name="acg-cdx-membership-proxy-config" api="acg-cdx-membership-proxy.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <configuration-properties doc:name="Configuration properties" doc:id="22ac46c9-f0e7-4061-bb2f-e7b1638a9602" file="application.properties" />
+	<configuration-properties doc:name="Configuration properties" doc:id="48a6b22b-0112-4b51-9e9c-2b56e212ab98" file="${mule.env}.properties" />
+	<global-property doc:name="Global Property" doc:id="154fc519-aa81-40cf-86fa-d5c837be14c3" name="env" value="qa" />
+
+	<api-gateway:autodiscovery apiId="${api.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="f9782efe-be34-4a69-a7f0-750049696f21" flowRef="acg-cdx-membership-proxy-main" />
+	<flow name="acg-cdx-membership-proxy-main">
+        <http:listener config-ref="HTTP_Listener_config" path="${cdxproxy.listener.path}">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="acg-cdx-membership-proxy-config" />
+		<error-handler ref="globalError_Handler" />
+    </flow>
+    <flow name="get:\auth:acg-cdx-membership-proxy-config">
+		<flow-ref doc:name="Flow Reference" doc:id="8d9336b6-eb3b-4b35-98af-6810c31ff5be" name="cdx-membership-proxy-auth-flow"/>
+    </flow>
+    <flow name="get:\lookup:acg-cdx-membership-proxy-config">
+		<flow-ref doc:name="cdx-membership-proxy-lookup-flow" doc:id="f460d1ec-16e9-436d-8de2-f0edd2fa576e" name="cdx-membership-proxy-lookup-flow"/>
+    </flow>
+    <flow name="get:\search:acg-cdx-membership-proxy-config">
+		<flow-ref doc:name="cdx-membership-proxy-search-flow" doc:id="b47793d8-75d4-4483-b955-e57a9075c6b5" name="cdx-membership-proxy-search-flow"/>
+    </flow>
+</mule>

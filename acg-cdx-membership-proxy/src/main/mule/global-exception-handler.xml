@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="globalError_Handler" doc:id="c703c37f-d4bb-4067-8e16-44730211d39d" >
+            <on-error-propagate type="APIKIT:NOT_FOUND, HTTP:NOT_FOUND" enableNotifications="true" logException="true">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "error": {
+        "errorCode": "404",
+        "errorMessage": "Record/Resource Not Found",
+        "timeStamp": (now()>> 'US/Eastern')
+    }
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "error": {
+        "errorCode": "405",
+        "errorMessage": "Method Not Allowed",
+        "timeStamp": (now()>> 'US/Eastern')
+    }
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            
+            <!-- <on-error-propagate enableNotifications="true"
+			logException="true" doc:name="On Error Propagate"
+			doc:id="938e1305-1b38-4ba9-8ac3-f1df247fdab7"
+			type="HTTP:SECURITY">
+			<ee:transform
+				doc:name="Trans"
+				doc:id="a750fb2c-a941-4bf1-9d2f-1bf597eac6eb">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+-&#45;&#45;
+
+error:error.detailedDescription
+]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[401]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate> -->
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="8f9f9dcd-5643-4e30-97ee-ce3beaa26a20" type="ANY">
+		<ee:transform doc:name="Transform Message" doc:id="5b498b39-cfd4-4f10-9765-727e6e130f31" >
+				<ee:message >
+
+					<ee:set-payload ><![CDATA[  %dw 2.0
+output application/json
+---
+ {
+    "error": {
+        "errorCode": "500",
+        "errorMessage": "Internal server error",
+        "timeStamp": (now()>> 'US/Eastern')
+    }
+}           ]]></ee:set-payload>
+				
+</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+				</ee:variables>
+			
+</ee:transform>
+		</on-error-propagate>
+	</error-handler>
+        
+  
+	
+</mule>

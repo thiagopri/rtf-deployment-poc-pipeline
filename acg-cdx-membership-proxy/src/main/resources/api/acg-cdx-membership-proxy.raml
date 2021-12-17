@@ -1,0 +1,99 @@
+#%RAML 1.0
+title: acg-cdx-membership-proxy
+version: 1.0.0
+baseUri: https://api.dev.acg.aaa.com/rf/enterprise/cdx/membership/v1
+mediaType: application/json
+
+/lookup:
+  get:
+    headers: 
+        mbr_id:
+          displayName: mbr_id
+          type: number
+          required: false
+          example: 123456789
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/cdxlookupResponse.raml  
+/search:
+  get:
+    queryParameters:
+         mbr_fst_nm :
+            type: string
+            required: false
+            example: "John" 
+         mbr_lst_nm:
+            type: string
+            required: false
+            example: "John" 
+         mbr_adr_pstl_cd:
+            type: number
+            required: false        
+            example: 12345
+         clb_cd:
+            type: number
+            required: false        
+            example: 123
+         mbrtel_nr:
+            type: number
+            required: false        
+            example: 123
+         startpos:
+           type: number
+           required: false
+           example: 1    
+         mbr_id:
+           type: number
+           required: false        
+           example: 12345678
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/cdxsearchResponse.raml
+/auth:
+  get:
+    headers: 
+        mbr_id:
+          displayName: mbr_id
+          type: number
+          required: false
+          example: 123456789
+    queryParameters:
+      source_clb:
+        type: number
+        required: false        
+        example: 111  
+      transaction_id:
+        type: number
+        required: false        
+        example: 1234
+      service_date:
+        type: number
+        required: false        
+        example: 15
+      service_month:
+        type: number
+        required: false        
+        example: 09
+      service_year:
+        type: number
+        required: false        
+        example: 2021
+      clb_cd:
+        type: number
+        required: false        
+        example: 123
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/cdxauthResponse.raml
+              
+      
+
+      
+      
+    

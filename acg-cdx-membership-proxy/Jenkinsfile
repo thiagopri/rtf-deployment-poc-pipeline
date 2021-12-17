@@ -17,121 +17,54 @@ pipeline {
 	tools {
     maven 'Maven'
     jdk 'JDK'
-  }
+}
 	
-	environment {
-				ARTIFACTORY_PATH = "libs-release-local/com/acg/services/api"
-				DEPLOYMENT_FOLDER_BUILDNUMBER = "/opt/app/jenkins/jobs/${JOB_NAME}/workspace/Artifact/com/acg/services/api/${JOB_NAME}/${JOB_NAME}-1.0.0-${BUILD_NUMBER}"
-				DEPLOYMENT_FOLDER_ARTIFACTVERSION = "/opt/app/jenkins/jobs/${JOB_NAME}/workspace/Artifact/com/acg/services/api/${JOB_NAME}/${JOB_NAME}-1.0.0-${ArtifactVersion}"
-			}
-	
-	stages{
-		//Check dependencies
-		stage('Check Dependencies'){
-			when{
-		    	expression { params.Env == 'DEV' && params.ArtifactVersion == ''}
-				}
-			steps{
-				sh 'mvn -v'
-				sh 'java -version'
-				
-			}
-		}
-		stage('Build') {
-		when{
-		    	expression { params.Env == 'DEV' && params.ArtifactVersion == ''}
-				}
-      steps {
-	      sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean -DskipTests package'
-      }
-    }
-		 stage('Test') {
-		 when{
-		    	expression { params.Env == 'DEV' && params.ArtifactVersion == ''}
-				}
-      steps {
-	      sh 'mvn -f ${JOB_NAME}/pom.xml clean test'
-      }
-    }
-	
-		
-		//dev Deployment
-		stage('Dev Deploy'){
-			when{
-		    	expression { params.Env == 'DEV' }
-				}
-			
-			
-			
-				steps {
-	      sh 'mvn -f ${JOB_NAME}/pom.xml -U -V -e -B -DskipTests -Dfile="Artifact/libs-release-local/com/acg/services/api/acg-cdx-membershipproxy-api/1.0.0-SNAPSHOT/acg-cdx-membershipproxy-api-1.0.0-SNAPSHOT-mule-application.jar" deploy -DmuleDeploy -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f"'
-      }	
-				
-				
-				
-				}
-		
-			
-				
-		
-		//QA Deployment
-		stage('QA Deploy') {
-			when {
-				expression { params.Env == 'QA' }
-				}
-			
-			steps {
-	      sh 'mvn -f ${JOB_NAME}/pom.xml -U -V -e -B -DskipTests deploy -DmuleDeploy -Dmule.version="4.3.0" -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Dcloudhub.app=${JOB_NAME}"-qa" -Dcloudhub.environment="QA" -Danypoint.platform.client_id="e7233b9e90334845bae1324f3c8f7613" -Danypoint.platform.client_secret="3baB6fCF17E14C9099467C0814F8241d" -Dcloudhub.bg="ACG" -Dcloudhub.worker="Micro"'
-      }
-		}
-		
+environment {
+	ARTIFACTORY_PATH = "libs-release-local/com/acg/services/api"
+	DEPLOYMENT_FOLDER_BUILDNUMBER = "/opt/app/jenkins/jobs/${JOB_NAME}/workspace/Artifact/com/acg/services/api/${JOB_NAME}/${JOB_NAME}-1.0.0-${BUILD_NUMBER}"
+	DEPLOYMENT_FOLDER_ARTIFACTVERSION = "/opt/app/jenkins/jobs/${JOB_NAME}/workspace/Artifact/com/acg/services/api/${JOB_NAME}/${JOB_NAME}-1.0.0-${ArtifactVersion}"
+}
 
-		//Push to artifactory
-		stage("Push to artifactory"){
-			when{
-		    	expression { params.Env == 'DEV' && params.ArtifactVersion == ''}
-				}
-			steps{
-				sh "pwd ; ls -al"
-				//sh "cd ${JOB_NAME} ; ls -al target"
-				//sh "ls -al target"
-				sh 'cp ${JOB_NAME}/target/*.jar .'
-				//sh 'zip -rv ${JOB_NAME}_1.0.${BUILD_NUMBER}.zip .'
-				sh "ls -al"
-				rtUpload (
-					serverId: 'plentjnks01', 
-					spec: '''{
-							"files": [
-							{
-							"pattern": "acg-cdx-membershipproxy-api-1.0.0-SNAPSHOT-mule-application.jar",
-							"target": "${ARTIFACTORY_PATH}/${JOB_NAME}/${JOB_NAME}_1.0.${BUILD_NUMBER}/"
-							}
-						]
-					}''',
-					buildName: '${JOB_NAME}',
-					buildNumber: '${BUILD_NUMBER}'
-				)
-			}
+stages{
+	stage('Build and Test') {
+		steps {
+			sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
 		}
-		
 	}
-		post{
-			always{
-				cleanWs()
-			}
-			aborted{
-					mail bcc: '', body: "Hi Team,\n\nDeployment Details: \nDeployment Artifact - ${deployables}.\nStatus - ${currentBuild.currentResult}.\nConsole Logs - ${env.BUILD_URL}console \n\nThanks,\nmulesoftDev Team", cc: '', from: '', replyTo: '', subject: "Jenkins Job - ${env.JOB_NAME} - Status - ${currentBuild.currentResult}", to: 'sakula@acg.aaa.com'
-			}
-			failure{
-					mail bcc: '', body: "Hi Team,\n\nDeployment Details: \nDeployment Artifact - ${deployables}.\nStatus - ${currentBuild.currentResult}.\nConsole Logs - ${env.BUILD_URL}console \n\nThanks,\nmulesoftDev Team", cc: '', from: '', replyTo: '', subject: "Jenkins Job - ${env.JOB_NAME} - Status - ${currentBuild.currentResult}", to: 'sakula@acg.aaa.com'
-			}
-			success{
-					mail bcc: '', body: "Hi Team,\n\nDeployment Details: \nDeployment Artifact - ${deployables}.\nStatus - ${currentBuild.currentResult}.\nConsole Logs - ${env.BUILD_URL}console \n\nThanks,\nmulesoftDev Team", cc: '', from: '', replyTo: '', subject: "Jenkins Job - ${env.JOB_NAME} - Status - ${currentBuild.currentResult}", to: 'sakula@acg.aaa.com'
-			}
-		}
 	
+
+	//dev Deployment
+	stage('Deploy to Anypoint Exchange'){
+		steps {
+			sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests'
+		}	
+	}
+
+	//dev Deployment
+	stage('Dev Deploy'){
+		steps {
+			sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
+		}	
+	}
+}
+
+post{
+	always{
+		cleanWs()
+	}
+	aborted{
+			
+	}
+	failure{
+			
+	}
+	success{
+			
+	}
+}
+
+
 	
-		
 
 
 }

@@ -29,18 +29,14 @@ pipeline {
 
 	stages{
 		stage('Build and Test') {
-			agent {
-				label "any"
-			}    		
+			agent any	   		
 			steps {
 				sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
 			}
 		}
 		
 		stage('Update pom version') {
-			agent {
-				label "any"
-			}   		
+			agent any	   		
 			steps {
 				sh 'printenv'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit'
@@ -60,9 +56,7 @@ pipeline {
 
 		//dev Deployment
 		stage('Deploy to Anypoint Exchange'){
-			agent {
-				label "any"
-			}   		
+			agent any	   		
 			steps {
 				sh 'echo deploy exchange'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests'
@@ -71,9 +65,7 @@ pipeline {
 
 		//dev Deployment
 		stage('Dev Deploy'){
-			agent {
-				label "any"
-			}   		
+			agent any	   		
 			steps {
 				sh 'echo deploy dev'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
@@ -96,9 +88,7 @@ pipeline {
 
 		//Deploy Prod Notification
 		stage('Deploy Prod'){
-			agent {
-				label "any"
-			}   		
+			agent any		
 			steps {
 				sh 'echo deploying in PROD'
 			}	

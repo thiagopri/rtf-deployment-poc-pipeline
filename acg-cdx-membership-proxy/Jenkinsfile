@@ -31,6 +31,7 @@ pipeline {
 		stage('Build and Test') {
 			agent any	   		
 			steps {
+				sh 'echo build and test'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
 			}
 		}

@@ -43,7 +43,7 @@
 						<applicationName>${app.name}</applicationName>
 						<environment>${rtf.environment}</environment>
 						<provider>MC</provider>
-						<target>acg-rtf-dev</target>
+						<target>${rtf.target}</target>
 						<replicas>1</replicas>
 						<skipDeploymentVerification>true</skipDeploymentVerification>
 						<properties>

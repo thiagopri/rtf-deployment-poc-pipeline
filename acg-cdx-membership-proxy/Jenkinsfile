@@ -31,8 +31,7 @@ pipeline {
 		stage('Build and Test') {
 			agent any	   		
 			steps {
-				sh 'echo build and test'
-				//sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
+				sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
 			}
 		}
 		
@@ -60,8 +59,7 @@ pipeline {
 		stage('Deploy to Anypoint Exchange'){
 			agent any	   		
 			steps {
-				sh 'echo deploy exchange'
-				//sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests'
+				sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests'
 			}	
 		}
 
@@ -69,17 +67,16 @@ pipeline {
 		stage('Dev Deploy'){
 			agent any	   		
 			steps {
-				sh 'echo deploy dev'
-				//sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
+				sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Drtf.target=acg-rtf-dev -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
 			}	
 		}
 
-		stage ("Approval to deploy to Prod") {
+		stage ("Approval to deploy to QA") {
 			agent any        
 
 			steps {
 				sh 'echo sending email notification'
-				timeout(time: 60, unit: 'SECONDS') {
+				timeout(time: 60, unit: 'MINUTES') {
 					input 'Do you want to proceed to the Deployment?'
 				}
 			}
@@ -88,10 +85,10 @@ pipeline {
 
 
 		//Deploy Prod Notification
-		stage('Deploy Prod'){
+		stage('Deploy QA'){
 			agent any		
 			steps {
-				sh 'echo deploying in PROD'
+				sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-qa-v1 -Drtf.target=acg-rtf-test -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="QA" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
 			}	
 		}
 	}

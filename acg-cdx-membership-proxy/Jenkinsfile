@@ -75,13 +75,11 @@ pipeline {
 		}
 
 		stage ("Approval to deploy to Prod") {
-			agent none        
+			agent any        
 
 			steps {
-				node {
-					sh 'echo sending email notification'
-				}	
-				timeout(time: 60, unit: 'SECONDS') {
+				sh 'echo sending email notification'
+=				timeout(time: 60, unit: 'SECONDS') {
 					input 'Do you want to proceed to the Deployment?'
 				}
 			}

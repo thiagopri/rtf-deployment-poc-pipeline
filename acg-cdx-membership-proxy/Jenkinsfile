@@ -36,13 +36,13 @@ stages{
 	stage('Update pom version') {
 		steps {
 			sh 'printenv'
-			sh 'echo branch name: ${scm.branches[0].name}'
+			sh 'scm.branches[0].name'
 
 			//sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit'
 			//sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\\${parsedVersion.majorVersion}.\\${parsedVersion.minorVersion}.${BUILD_NUMBER} versions:commit'
 			sh 'git config user.name "Build Agent"'
 			sh 'git config user.email "cicd_agent@acg.aaa.com"'
-			sh 'git checkout -q master'
+			sh 'git checkout -q ${GIT_BRANCH}'
 			sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\\${parsedVersion.majorVersion}.\\${parsedVersion.minorVersion}.\\${parsedVersion.nextIncrementalVersion} versions:commit'
 			sh 'git commit -q -a -m "Asset version bumped ***NO_CI***"'
         	sh 'git push -q'

@@ -6,7 +6,7 @@
 	<groupId>217ea432-02e0-4fcc-9d32-fe64059e1700</groupId>
 	<!-- <groupId>com.acg.services.api</groupId> -->
 	<artifactId>acg-cdx-membershipproxy</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<packaging>mule-application</packaging>
 
 	<name>acg-cdx-membership-proxy</name>

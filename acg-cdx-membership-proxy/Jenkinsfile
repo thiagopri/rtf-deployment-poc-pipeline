@@ -73,13 +73,15 @@ pipeline {
 		}
 
 		stage ("Approval to deploy to Prod") {
-			agent any        
+			agent none        
 
 			steps {
 				sh 'echo sending email notification'
 
-				timeout(time: 60, unit: 'SECONDS') {
-					input 'Do you want to proceed to the Deployment?'
+				node {
+					timeout(time: 60, unit: 'SECONDS') {
+						input 'Do you want to proceed to the Deployment?'
+					}
 				}
 			}
 		}
@@ -98,6 +100,7 @@ pipeline {
 
 
 	post{
+		agent any		
 		always{
 			cleanWs()
 		}

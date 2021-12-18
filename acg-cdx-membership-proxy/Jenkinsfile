@@ -38,12 +38,14 @@ stages{
 			sh 'printenv'
 			//sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit'
 			//sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\\${parsedVersion.majorVersion}.\\${parsedVersion.minorVersion}.${BUILD_NUMBER} versions:commit'
-			// sh 'git config user.name "Build Agent"'
-			// sh 'git config user.email "cicd_agent@acg.aaa.com"'
+			sh 'git config user.name "Build Agent"'
+			sh 'git config user.email "cicd_agent@acg.aaa.com"'
 			sh 'git checkout -q ${GIT_BRANCH}'
 			sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\\${parsedVersion.majorVersion}.\\${parsedVersion.minorVersion}.\\${parsedVersion.nextIncrementalVersion} versions:commit'
 			sh 'git commit -q -a -m "Asset version bumped ***NO_CI***"'
-        	sh 'git push -q'
+        	withCredentials([gitUsernamePassword(credentialsId: '83a5e022-c3b6-4e1b-9b25-0be82dc54844', gitToolName: 'git')]) {
+				sh 'git push -q'
+			}
 
 		}
 	}

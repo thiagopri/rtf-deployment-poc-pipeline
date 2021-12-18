@@ -78,8 +78,9 @@ pipeline {
 			agent none        
 
 			steps {
-				sh 'echo sending email notification'
-
+				node {
+					sh 'echo sending email notification'
+				}	
 				timeout(time: 60, unit: 'SECONDS') {
 					input 'Do you want to proceed to the Deployment?'
 				}

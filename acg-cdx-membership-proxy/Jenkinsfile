@@ -98,17 +98,21 @@ pipeline {
 
 
 	post{
-		agent any		
+		
 		always{
+			agent any		
 			cleanWs()
 		}
 		aborted{
+			agent any		
 			cleanWs()
 		}
 		failure{
+			agent any		
 			cleanWs()
 		}
 		success{
+			agent any		
 			cleanWs()
 		}
 	}

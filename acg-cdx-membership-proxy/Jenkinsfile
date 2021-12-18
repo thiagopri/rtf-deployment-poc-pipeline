@@ -26,12 +26,12 @@ environment {
 	DEPLOYMENT_FOLDER_ARTIFACTVERSION = "/opt/app/jenkins/jobs/${JOB_NAME}/workspace/Artifact/com/acg/services/api/${JOB_NAME}/${JOB_NAME}-1.0.0-${ArtifactVersion}"
 }
 
-stages{
-	// stage('Build and Test') {
-	// 	steps {
-	// 		sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
-	// 	}
-	// }
+node{
+	stage('Build and Test') {
+		steps {
+			sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
+		}
+	}
 	
 	stage('Update pom version') {
 		steps {
@@ -59,13 +59,30 @@ stages{
 	}
 
 	//dev Deployment
-	stage('Dev Deploy'){
+	// stage('Dev Deploy'){
+	// 	steps {
+	// 		sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
+	// 	}	
+	// }
+
+	stage('Send email'){
+		steps {
+			sh 'echo sending email to approvers'
+		}	
+	}
+
+}
+timeout(time: 10, unit: 'HOURS') {
+     input 'Do you want to proceed to the Deployment?'
+}
+node{
+	//dev Deployment
+	stage('Dev PROD'){
 		steps {
 			sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
 		}	
 	}
 }
-
 post{
 	always{
 		cleanWs()

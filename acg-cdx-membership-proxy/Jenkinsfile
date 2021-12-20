@@ -36,10 +36,15 @@ pipeline {
 		
 		stage('Update pom version') {
 			steps {
-				sh 'printenv'
+				//sh 'printenv'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\\${parsedVersion.majorVersion}.\\${parsedVersion.minorVersion}.${BUILD_NUMBER} versions:commit'
-				//GIT PAT = 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
+				//GIT PAT = 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
+				//Jenkins Token = 118220010a15ac785170400f182995f508
+				
+				sh 'GIT_TRACE=true'
+				sh 'GIT_CURL_VERBOSE=true'
+				sh 'GIT_SSH_COMMAND="ssh -vvv"'
 				sh 'git config user.name "Build Agent"'
 				sh 'git config user.email "cicd_agent@acg.aaa.com"'
 				sh 'git checkout -q ${GIT_BRANCH}'

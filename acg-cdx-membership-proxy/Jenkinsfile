@@ -9,10 +9,6 @@ pipeline {
 		
 	environment {
 		JOB_NAME = "acg-cdx-membership-proxy"
-		ARTIFACTORY_PATH = "libs-release-local/com/acg/services/api"
-		DEPLOYMENT_FOLDER_BUILDNUMBER = "/opt/app/jenkins/jobs/${JOB_NAME}/workspace/Artifact/com/acg/services/api/${JOB_NAME}/${JOB_NAME}-1.0.0-${BUILD_NUMBER}"
-		DEPLOYMENT_FOLDER_ARTIFACTVERSION = "/opt/app/jenkins/jobs/${JOB_NAME}/workspace/Artifact/com/acg/services/api/${JOB_NAME}/${JOB_NAME}-1.0.0-${ArtifactVersion}"
-		GITHUB_CREDS = credentials('github-thiagopri')
 	}
 
 	stages{
@@ -28,10 +24,10 @@ pipeline {
 			agent any
 			steps {
 
-				//Option not commmiting the pom.xml, but instead using the build number as minor version
+				//Option 1  - not commmiting the pom.xml, but instead using the build number as minor version
 				sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\\${parsedVersion.majorVersion}.\\${parsedVersion.minorVersion}.${BUILD_NUMBER} versions:commit'
 
-				//Option commmiting the pom.xml
+				//Option 2 commmiting the pom.xml
 				//GIT PAT = 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
 				//sh 'git config user.name "Build Agent"'
 				//sh 'git config user.email "cicd_agent@acg.aaa.com"'
@@ -45,6 +41,9 @@ pipeline {
 				//}
 
 				//Stash is mandatory because we are using different agents across stages
+				sh 'pwd'
+				sh 'ls -la'
+				sh 'cat ${JOB_NAME}/pom.xml'
 				stash includes: '${JOB_NAME}/pom.xml', name: 'pom_staging_area' 
 			}
 		}

@@ -75,6 +75,8 @@ pipeline {
 		stage ("Approval to deploy to QA") {
 			agent none
 			steps {
+				sh "echo test"
+				
                 emailext (
 					subject: "Deploy to STAGE - Approval Pending",
 					body: """<p>There is a <b>STAGE</b> deployment pending for your approval: Job '${JOB_NAME} - ${BUILD_NUMBER}':</p>

@@ -33,7 +33,7 @@ pipeline {
 				//Jenkins Token = 118220010a15ac785170400f182995f508
 				sh 'git config user.name "Build Agent"'
 				sh 'git config user.email "cicd_agent@acg.aaa.com"'
-				sh 'git config credential.helper "!f() { sleep 1; echo username=${env.GITHUB_CREDS_USR}; echo password=${env.GITHUB_CREDS_PSW}; }; f"'
+				sh 'git config credential.helper "!f() { sleep 1; echo \\"username=${env.GITHUB_CREDS_USR}\\"; echo \\"password=${env.GITHUB_CREDS_PSW}\\"; }; f"'
 				//sh 'git checkout -q ${GIT_BRANCH}'
 				sh 'git checkout -q $(echo "${GIT_BRANCH}" | sed "s@.*/@@")'
 				sh 'git pull -q'

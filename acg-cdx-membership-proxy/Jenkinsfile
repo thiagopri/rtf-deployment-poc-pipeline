@@ -29,7 +29,7 @@ pipeline {
 			steps {
 
 				//Option not commmiting the pom.xml, but instead using the build number as minor version
-				sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\\${parsedVersion.majorVersion}.\\${parsedVersion.minorVersion}.\\${BUILD_NUMBER} versions:commit'
+				sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\\${parsedVersion.majorVersion}.\\${parsedVersion.minorVersion}.${BUILD_NUMBER} versions:commit'
 
 				//Option commmiting the pom.xml
 				//GIT PAT = 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
@@ -76,10 +76,10 @@ pipeline {
 					body: """<p>There is a <b>QA</b> deployment pending for your approval: Job '${JOB_NAME} - ${BUILD_NUMBER}':</p>
 					<p>Access the follow URL and approve/reject this deploument: <a href='${BUILD_URL}/input'>Approve/Reject</a></p>""",
 					to: "thiagopri@gmail.com",
-					from: "thiago@moveisconforto.com.br"
+					from: "thiagopri@gmail.com"
                 ) 		
 
-				timeout(time: 12, unit: 'HOURS') {
+				timeout(time: 72, unit: 'HOURS') {
 					input 'Do you want to proceed to the Deployment?'
 				}
 			}

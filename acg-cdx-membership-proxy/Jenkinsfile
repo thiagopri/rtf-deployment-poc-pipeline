@@ -52,6 +52,9 @@ pipeline {
 			steps {
 				unstash 'pom_staging_area' 
 				configFileProvider([configFile(fileId: "acg-mule4-mvn-settings", replaceTokens: true, targetLocation: 'settings.xml', variable: 'MAVEN_SETTINGS_FILE')]) {
+					sh 'pwd'
+					sh 'ls -la'
+					sh 'cat settings.xml'
 					sh 'cat ${env.MAVEN_SETTINGS_FILE}'
 					sh 'mvn -f ${JOB_NAME}/pom.xml -s ${env.MAVEN_SETTINGS_FILE} -U -V -e -B deploy -DskipTests'
 				}

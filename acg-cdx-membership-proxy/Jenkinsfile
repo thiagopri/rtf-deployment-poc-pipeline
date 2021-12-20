@@ -64,7 +64,7 @@ pipeline {
 			steps {
 				unstash 'pom_staging_area' 
 				configFileProvider([configFile(fileId: "acg-mule4-mvn-settings", replaceTokens: true, targetLocation: 'settings.xml', variable: 'MAVEN_SETTINGS_FILE')]) {
-					sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Drtf.target=acg-rtf-dev -Denv="dev" -Danypoint.username="${ANYPOINT_CREDS_USR}" -Danypoint.password="${ANYPOINT_CREDS_PSW}" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
+					sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Drtf.public_url="rfapi-dev.acg.aaa.com" -Drtf.target=acg-rtf-dev -Denv="dev" -Danypoint.username="${ANYPOINT_CREDS_USR}" -Danypoint.password="${ANYPOINT_CREDS_PSW}" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
 				}
 			}	
 		}
@@ -94,7 +94,7 @@ pipeline {
 			steps {
 				unstash 'pom_staging_area' 
 				configFileProvider([configFile(fileId: "acg-mule4-mvn-settings", replaceTokens: true, targetLocation: 'settings.xml', variable: 'MAVEN_SETTINGS_FILE')]) {
-					sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-qa-v1 -Drtf.target=acg-rtf-test -Denv="dev" -Danypoint.username="${ANYPOINT_CREDS_USR}" -Danypoint.password="${ANYPOINT_CREDS_PSW}" -Drtf.environment="QA" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
+					sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-qa-v1 -Drtf.public_url="rfapi-qa.acg.aaa.com" -Drtf.target=acg-rtf-test -Denv="dev" -Danypoint.username="${ANYPOINT_CREDS_USR}" -Danypoint.password="${ANYPOINT_CREDS_PSW}" -Drtf.environment="QA" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
 				}
 			}	
 		}

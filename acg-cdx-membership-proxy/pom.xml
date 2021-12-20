@@ -55,7 +55,7 @@
 						<deploymentSettings>
 							<http>
 								<inbound>
-									<publicUrl>rfapi-dev.acg.aaa.com/${app.name}</publicUrl>
+									<publicUrl>${rtf.public_url}/${app.name}</publicUrl>
 								</inbound>
 							</http>
 							<resources>

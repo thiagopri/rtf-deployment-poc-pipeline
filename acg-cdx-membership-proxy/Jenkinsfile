@@ -43,8 +43,9 @@ pipeline {
 				//Stash is mandatory because we are using different agents across stages
 				sh 'pwd'
 				sh 'ls -la'
+				sh 'ls -la ${JOB_NAME}'
 				sh 'cat ${JOB_NAME}/pom.xml'
-				stash includes: '${JOB_NAME}/*.xml', name: 'pom_staging_area' 
+				stash includes: '**/*.xml', name: 'pom_staging_area' 
 			}
 		}
 

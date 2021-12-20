@@ -55,7 +55,7 @@ pipeline {
 					sh 'pwd'
 					sh 'ls -la'
 					sh 'cat settings.xml'
-					sh 'cat ${env.MAVEN_SETTINGS_FILE}'
+					sh 'cat ${MAVEN_SETTINGS_FILE}'
 					sh 'mvn -f ${JOB_NAME}/pom.xml -s ${env.MAVEN_SETTINGS_FILE} -U -V -e -B deploy -DskipTests'
 				}
 			}	

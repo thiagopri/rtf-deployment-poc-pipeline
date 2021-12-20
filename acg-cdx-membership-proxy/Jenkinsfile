@@ -30,7 +30,7 @@ pipeline {
 	stages{
 		stage('Build and Test') {
 			steps {
-				sh 'skip'
+				sh 'echo skip'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
 			}
 		}
@@ -65,7 +65,7 @@ pipeline {
 		//dev Deployment
 		stage('Deploy to Anypoint Exchange'){
 			steps {
-				sh 'skip'
+				sh 'echo skip'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests'
 			}	
 		}
@@ -74,7 +74,7 @@ pipeline {
 		stage('Dev Deploy'){
 			//agent any	   		
 			steps {
-				sh 'skip'
+				sh 'echo skip'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Drtf.target=acg-rtf-dev -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
 			}	
 		}
@@ -93,7 +93,7 @@ pipeline {
 		//Deploy Prod Notification
 		stage('Deploy QA'){
 			steps {
-				sh 'skip'
+				sh 'echo skip'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-qa-v1 -Drtf.target=acg-rtf-test -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="QA" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
 			}	
 		}

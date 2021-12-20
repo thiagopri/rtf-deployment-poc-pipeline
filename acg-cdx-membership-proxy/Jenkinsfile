@@ -9,6 +9,7 @@ pipeline {
 		
 	environment {
 		JOB_NAME = "acg-cdx-membership-proxy"
+		ANYPOINT_CREDS = credentials('anypoint-acgapiplatform')
 	}
 
 	stages{
@@ -54,7 +55,9 @@ pipeline {
 			agent any
 			steps {
 				unstash 'pom_staging_area' 
-				sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests'
+				configFileProvider([configFile(fileId: "acg-mule4-mvn-settings", replaceTokens: true, targetLocation: 'settings.xml', variable: 'MAVEN_SETTINGS_FILE')]) {
+					sh 'mvn -f ${JOB_NAME}/pom.xml -s "${env.MAVEN_SETTINGS_FILE}" -U -V -e -B deploy -DskipTests'
+				}
 			}	
 		}
 
@@ -64,7 +67,9 @@ pipeline {
 			
 			steps {
 				unstash 'pom_staging_area' 
-				sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Drtf.target=acg-rtf-dev -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
+				configFileProvider([configFile(fileId: "acg-mule4-mvn-settings", replaceTokens: true, targetLocation: 'settings.xml', variable: 'MAVEN_SETTINGS_FILE')]) {
+					sh 'mvn -f ${JOB_NAME}/pom.xml -s "${env.MAVEN_SETTINGS_FILE}" -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Drtf.target=acg-rtf-dev -Denv="dev" -Danypoint.username="${env.ANYPOINT_CREDS_USR}" -Danypoint.password="${env.ANYPOINT_CREDS_PSW}" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
+				}
 			}	
 		}
 
@@ -92,32 +97,35 @@ pipeline {
 			agent any
 			steps {
 				unstash 'pom_staging_area' 
-				sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-qa-v1 -Drtf.target=acg-rtf-test -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="QA" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
+				configFileProvider([configFile(fileId: "acg-mule4-mvn-settings", replaceTokens: true, targetLocation: 'settings.xml', variable: 'MAVEN_SETTINGS_FILE')]) {
+					sh 'mvn -f ${JOB_NAME}/pom.xml -s "${env.MAVEN_SETTINGS_FILE}" -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-qa-v1 -Drtf.target=acg-rtf-test -Denv="dev" -Danypoint.username="${env.ANYPOINT_CREDS_USR}" -Danypoint.password="${env.ANYPOINT_CREDS_PSW}" -Drtf.environment="QA" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
+				}
 			}	
 		}
 	}
 
 
 
-	post{
-		
+	 post{
 		always{
-			agent any
-			cleanWs()
+			node(null) {
+				cleanWs()
+			}
 		}
-		aborted{
-			agent any
-			cleanWs()
-		}
-		failure{
-			agent any
-			cleanWs()
-		}
+	// 	aborted{
+	// 		agent any
+	// 		cleanWs()
+	// 	}
+	// 	failure{
+	// 		agent any
+	// 		cleanWs()
+	// 	}
 		success{
-			agent any
-			cleanWs()
+			node(null) {
+				cleanWs()
+			}
 		}
-	}
+	 }
 
 
 	

@@ -44,7 +44,7 @@ pipeline {
 				sh 'pwd'
 				sh 'ls -la'
 				sh 'cat ${JOB_NAME}/pom.xml'
-				stash includes: '${JOB_NAME}/pom.xml', name: 'pom_staging_area' 
+				stash includes: '${JOB_NAME}/*.xml', name: 'pom_staging_area' 
 			}
 		}
 

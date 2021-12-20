@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 def deployables = ""
 
 pipeline {
-	agent any
+	agent none
 	
 	tools {
 		maven 'Maven'
@@ -29,6 +29,7 @@ pipeline {
 
 	stages{
 		stage('Build and Test') {
+			agent any
 			steps {
 				sh 'echo skip'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
@@ -36,6 +37,7 @@ pipeline {
 		}
 		
 		stage('Update pom version') {
+			agent any
 			steps {
 				//sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml build-helper:parse-version versions:set -DnewVersion=\\${parsedVersion.majorVersion}.\\${parsedVersion.minorVersion}.${BUILD_NUMBER} versions:commit'
@@ -57,6 +59,7 @@ pipeline {
 
 		//dev Deployment
 		stage('Deploy to Anypoint Exchange'){
+			agent any
 			steps {
 				sh 'echo skip'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests'
@@ -65,7 +68,8 @@ pipeline {
 
 		//dev Deployment
 		stage('Dev Deploy'){
-			//agent any	   		
+			agent any
+			
 			steps {
 				sh 'echo skip'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-dev-v1 -Drtf.target=acg-rtf-dev -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="DEV" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
@@ -76,7 +80,7 @@ pipeline {
 			agent none
 			steps {
 				sh "echo test"
-				
+
                 emailext (
 					subject: "Deploy to STAGE - Approval Pending",
 					body: """<p>There is a <b>STAGE</b> deployment pending for your approval: Job '${JOB_NAME} - ${BUILD_NUMBER}':</p>
@@ -95,6 +99,7 @@ pipeline {
 
 		//Deploy Prod Notification
 		stage('Deploy QA'){
+			agent any
 			steps {
 				sh 'echo skip'
 				//sh 'mvn -f ${JOB_NAME}/pom.xml -s settings.xml -U -V -e -B deploy -DskipTests -DmuleDeploy -Dapp.name=acg-cdx-membershipproxy-rfapi-qa-v1 -Drtf.target=acg-rtf-test -Denv="dev" -Danypoint.username="acgapiplatform" -Danypoint.password="AcgMulesoft@100" -Drtf.environment="QA" -Danypoint.platform.client_id="087b2709f4ca42a7a49e1b2983bcbf31" -Danypoint.platform.client_secret="B4515383fBd142228B65cafABaDd90f0"'
@@ -107,15 +112,19 @@ pipeline {
 	post{
 		
 		always{
+			agent any
 			cleanWs()
 		}
 		aborted{
+			agent any
 			cleanWs()
 		}
 		failure{
+			agent any
 			cleanWs()
 		}
 		success{
+			agent any
 			cleanWs()
 		}
 	}

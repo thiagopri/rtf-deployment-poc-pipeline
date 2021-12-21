@@ -16,8 +16,7 @@ pipeline {
 		stage('Build and Test') {
 			agent any
 			steps {
-				sh 'echo skip'
-				//sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
+				sh 'mvn -f ${JOB_NAME}/pom.xml -B -U -e -V clean package'
 			}
 		}
 		
@@ -42,7 +41,7 @@ pipeline {
 				//}
 
 				//Stash is mandatory because we are using different agents across stages
-				stash includes: '**/*.xml', name: 'pom_staging_area' 
+				stash includes: '**/pom.xml', name: 'pom_staging_area' 
 			}
 		}
 

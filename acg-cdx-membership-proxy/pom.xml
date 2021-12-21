@@ -37,8 +37,9 @@
 						<uri>https://anypoint.mulesoft.com</uri>
 						<muleVersion>${app.runtime}</muleVersion>
 						<!-- user <server> above or add your user/pass below -->
-						<username>${anypoint.username}</username>
-						<password>${anypoint.password}</password>
+						<connectedAppClientId>${anypoint.connectedAppClientId}</connectedAppClientId>
+						<connectedAppClientSecret>${anypoint.connectedAppClientSecret}</connectedAppClientSecret>
+						<connectedAppGrantType>client_credentials</connectedAppGrantType>
 						<businessGroup>ACG</businessGroup>
 						<applicationName>${app.name}</applicationName>
 						<environment>${rtf.environment}</environment>

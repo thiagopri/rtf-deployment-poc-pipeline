@@ -81,11 +81,11 @@ pipeline {
                 ) 		
 
 				timeout(time: 72, unit: 'HOURS') {
-					input {
-						message 'Do you want to proceed to the Deployment?'
-						ok "Yes, PROCEED!"
-						submitter 'admin' //accept a list of jenkins Id (i.e P74150) allowed to approve it (comma separated) 
-					}
+					input (
+						message: 'Do you want to proceed to the Deployment?',
+						ok: "Yes, PROCEED!",
+						submitter: 'admin' //accept a list of jenkins Id (i.e P74150) allowed to approve it (comma separated) 
+					)
 				}
 			}
 		}

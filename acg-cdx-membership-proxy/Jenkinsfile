@@ -45,7 +45,7 @@ pipeline {
 			}
 		}
 
-		//dev Deployment
+		//Anypoint Deployment
 		stage('Deploy to Anypoint Exchange'){
 			agent any
 			steps {
@@ -56,7 +56,7 @@ pipeline {
 			}	
 		}
 
-		//dev Deployment
+		//DEV Deployment - Automatically
 		stage('Dev Deploy'){
 			agent any
 			
@@ -73,21 +73,26 @@ pipeline {
 			steps {
                 emailext (
 					subject: "Deploy to QA - Approval Pending",
+					//Body below accepts HTML as long as the Jenkins is configured to send content type = html 
 					body: """<p>There is a <b>QA</b> deployment pending for your approval: Job '${JOB_NAME} - ${BUILD_NUMBER}':</p>
 					<p>Access the follow URL and approve/reject this deploument: <a href='${BUILD_URL}/input'>Approve/Reject</a></p>""",
-					to: "thiagopri@gmail.com",
+					to: "thiagopri@gmail.com", //accept a list of emails (comma separated) 
 					from: "thiagopri@gmail.com"
                 ) 		
 
 				timeout(time: 72, unit: 'HOURS') {
-					input 'Do you want to proceed to the Deployment?'
+					input {
+						message 'Do you want to proceed to the Deployment?'
+						ok "Yes, PROCEED!"
+						submitter 'admin' //accept a list of jenkins Id (i.e P74150) allowed to approve it (comma separated) 
+					}
 				}
 			}
 		}
 
 
 
-		//Deploy Prod Notification
+		//Deploy to QA - Upon approval
 		stage('Deploy QA'){
 			agent any
 			steps {
